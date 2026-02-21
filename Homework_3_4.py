@@ -3,7 +3,6 @@ import sys
 
 def input_error(func):
 
-
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -13,12 +12,16 @@ def input_error(func):
             return "Contact not found."
         except IndexError:
             return "Enter user name."
-
     return inner
 
 
 def parse_input(user_input):
+
     parts = user_input.strip().split()
+
+    if not parts:
+        return "", []
+
     command = parts[0].lower()
     args = parts[1:]
     return command, args
@@ -34,8 +37,10 @@ def add_contact(args, contacts):
 @input_error
 def change_contact(args, contacts):
     name, phone = args
+
     if name not in contacts:
         raise KeyError
+
     contacts[name] = phone
     return "Contact updated."
 
@@ -61,6 +66,10 @@ def main():
     while True:
         user_input = input("Enter a command: ")
         command, args = parse_input(user_input)
+
+        if not command:
+            print("Enter a command.")
+            continue
 
         if command in ["close", "exit"]:
             print("Good bye!")
